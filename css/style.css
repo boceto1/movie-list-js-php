@@ -94,3 +94,33 @@ footer {
   margin-bottom: 15px;
   font-size: 11px;
 }
+
+#movies-box {
+  display: flex;
+  position: relative;
+}
+
+#my-movies {
+  margin: 20px;
+}
+#my-movies h1 {
+  text-align: center;
+  font-size: 24px;
+  color: #564d4d;
+}
+#movie-info {
+  flex: 45%;
+  margin: 30px;
+  padding: 10px 20px;
+}
+#movie-info h1 {
+  color: #db0000;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+#movie-info p {
+  margin: 10px auto;
+}
+#movie-info b {
+  font-weight: 700;
+}
