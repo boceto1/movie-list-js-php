@@ -1,7 +1,7 @@
 const OMDB_API_SEARCH_BY_TITLE = "https://www.omdbapi.com/?apikey=84a0253e&page=1&s=";
 const OMDB_API_SEARCH_BY_ID = "https://www.omdbapi.com/?apikey=84a0253e&i=";
 
-const LOCAL_API = "http://localhost:3000/restApi.php";
+const LOCAL_API = "../restApi.php";
 
 $(document).ready(function () {
   // Initialize functions

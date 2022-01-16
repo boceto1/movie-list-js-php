@@ -15,8 +15,8 @@
 <body>
   <header>
     <ul>
-      <li><a href="./index.html">TuPelicula</a></li>
-      <li><a href="./my-movies.html">Mis Favoritas</a></li>
+      <li><a href="./index.php">TuPelicula</a></li>
+      <li><a href="./my-movies.php">Mis Favoritas</a></li>
     </ul>
   </header>
   <main>
