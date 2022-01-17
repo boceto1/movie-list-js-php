@@ -26,12 +26,11 @@
       </form>
     </section>
     <section id="movies-box">
-      <ul id="movies-list">
-      </ul>
+      <div>
+        <ul id="movies-list">
+        </ul>
+      </div>
     </section>
   </main>
-  <footer>
-    <p>Deber Cliente - Servidor | Unir 2022</p>
-  </footer>
 </body>
 </html>

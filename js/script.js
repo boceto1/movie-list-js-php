@@ -1,14 +1,20 @@
 const OMDB_API_SEARCH_BY_TITLE = "https://www.omdbapi.com/?apikey=84a0253e&page=1&s=";
 const OMDB_API_SEARCH_BY_ID = "https://www.omdbapi.com/?apikey=84a0253e&i=";
 
-const LOCAL_API = "../restApi.php";
+const LOCAL_API = "../Controller/restApiController.php";
+let moviesIds = [];
 
 $(document).ready(function () {
   // Initialize functions
   if($('#my-movies').length){
-    fetchFavoriteMovies();
+    fetchFavoriteMovies(res => renderCards(res, 'my-movies'));
   } else {
     fetchMovies('batman');
+    fetchFavoriteMovies(res => {
+      const fetchMoviesIds = res.map(movie => movie.id);
+      moviesIds = [...fetchMoviesIds];
+      console.log(moviesIds);
+    });
   }
 
   $("#search-box-form").submit(function (event) {
@@ -35,6 +41,7 @@ const fetchMovies = title => {
 }
 
 const fetchMovie = id => {
+  console.log('i am here fetch movie');
   $.ajax({
     type: "GET",
     url: `${OMDB_API_SEARCH_BY_ID}${id}`,
@@ -44,12 +51,12 @@ const fetchMovie = id => {
   });
 }
 
-const fetchFavoriteMovies = () => {
+const fetchFavoriteMovies = (callbackFunction) => {
   $.ajax({
     type: "GET",
     url: `${LOCAL_API}`,
     success: function (res) {
-      renderCards(JSON.parse(res), 'my-movies');
+      callbackFunction(JSON.parse(res));
     },
   });
 }
@@ -60,7 +67,9 @@ const postAddFavoriteMovie = movie => {
     url: LOCAL_API,
     data: movie,
     success: function () {
-      alert("Pelicula añadida a favoritas")
+      alert("Pelicula añadida a favoritas");
+      $(`#${movie.id} button`).remove();
+      $(`#${movie.id}`).append(`<p>Pelicula ya en tu lista</p>`);
     }
   });
 }
@@ -70,16 +79,16 @@ const deleteFavoriteMovie = movieId => {
     type: "DELETE",
     url: `${LOCAL_API}?id=${movieId}`,
     success: function () {
-      fetchFavoriteMovies();
+      fetchFavoriteMovies(fetchFavoriteMovies(res => renderCards(res, 'my-movies')));
     },
   });
 }
 
-
 const renderCards = (movies, type='general') => {
-  if (!movies) {
+  if (!movies || movies.length === 0) {
     const errorMessage = '<p style="color:red">No se han encontrado títulos con ese nombre</p>'
     $('#movies-box').prepend(errorMessage);
+    $('#movies-list .movie-card').remove();
   } else {
     $('#movies-list .movie-card').remove();
     const cardBuilder = type === 'general' ? buildCard: buildMyMovieCard;
@@ -97,22 +106,25 @@ const addMovieToFavorite = (id, title, year, poster) => {
 
 const buildCard = movie => {
   const { imdbID, Title, Year, Poster } = movie;
-
   const poster = Poster === 'N/A'
     ? './img/poster-placeholder.png'
     : Poster;
 
   const cardMovie = `
-    <li id="${Title}" class="movie-card">
+    <li id="${imdbID}" class="movie-card">
       <img 
         src=${poster}
         alt="${Title} Poster"
       >
       <h3>${Title}</h3>
       <p>${Year}</p>
-      <button onclick="addMovieToFavorite('${imdbID}','${Title}','${Year}','${Poster}')">
-        Añadir a favoritos
-      </button>
+      ${moviesIds.includes(imdbID)
+      ? `<p>Pelicula ya en tu lista</p>`
+      :`<button onclick="addMovieToFavorite('${imdbID}','${Title}','${Year}','${Poster}')">
+          Añadir a favoritos
+        </button>`
+    }
+
     </li>
     `;
     $("#movies-list").append(cardMovie);
@@ -131,8 +143,8 @@ const buildMyMovieCard = movie => {
       >
       <h3>${movie.title}</h3>
       <p>${movie.year}</p>
-      <button id="${movie.id}" onClick="onHandleRenderMovie(this.id)">Ver mas info</button>
-      <button id="${movie.id}" onClick="deleteFavoriteMovie(this.id)">Eliminar</button>
+      <button id="${movie.id}" onClick="onHandleRenderMovie(this.id)" class="info-button">Ver mas info</button>
+      <button id="${movie.id}" onClick="deleteFavoriteMovie(this.id)" class="delete-button">Eliminar</button>
     </li>
     `;
     $("#movies-list").append(cardMovie);
