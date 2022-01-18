@@ -9,11 +9,10 @@ $(document).ready(function () {
   if($('#my-movies').length){
     fetchFavoriteMovies(res => renderCards(res, 'my-movies'));
   } else {
-    fetchMovies('batman');
     fetchFavoriteMovies(res => {
       const fetchMoviesIds = res.map(movie => movie.id);
       moviesIds = [...fetchMoviesIds];
-      console.log(moviesIds);
+      fetchMovies('batman');
     });
   }
 
@@ -109,6 +108,7 @@ const buildCard = movie => {
   const poster = Poster === 'N/A'
     ? './img/poster-placeholder.png'
     : Poster;
+  const isPartOfMyMovies = moviesIds.includes(imdbID);
 
   const cardMovie = `
     <li id="${imdbID}" class="movie-card">
@@ -118,7 +118,7 @@ const buildCard = movie => {
       >
       <h3>${Title}</h3>
       <p>${Year}</p>
-      ${moviesIds.includes(imdbID)
+      ${isPartOfMyMovies
       ? `<p>Pelicula ya en tu lista</p>`
       :`<button onclick="addMovieToFavorite('${imdbID}','${Title}','${Year}','${Poster}')">
           Añadir a favoritos
